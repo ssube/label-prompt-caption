@@ -4,7 +4,7 @@ import gradio as gr
 from args import CAPTION_MODELS
 from models import AppState, GroupMetaFile
 from utils.dataset import list_group_images
-from utils.group import count_group_labels, load_group_meta
+from utils.group import count_group_labels, load_group_meta, save_group_meta
 
 def view_image(image: str, state: AppState) -> AppState:
     print("Viewing image...", image)
@@ -20,6 +20,13 @@ def add_group_label(group_state: GroupMetaFile, label: str) -> GroupMetaFile:
     return new_group_state
 
 
+def set_group_prompt(group_state: GroupMetaFile, model: str, prompt: str) -> GroupMetaFile:
+    print("Setting prompt...", model, prompt)
+    new_group_state = GroupMetaFile(**group_state.__dict__)
+    new_group_state.group.prompt[model] = prompt
+    return new_group_state
+
+
 def load_group_state(dataset_state: AppState) -> GroupMetaFile:
     print("Loading group state...", dataset_state.active_group)
     group_meta = load_group_meta(dataset_state.dataset, dataset_state.active_group)
@@ -28,6 +35,7 @@ def load_group_state(dataset_state: AppState) -> GroupMetaFile:
 
 def save_group_state(dataset_state: AppState, group_state: GroupMetaFile) -> None:
     print("Saving group state...", dataset_state.active_group, group_state)
+    save_group_meta(dataset_state.dataset, dataset_state.active_group, group_state)
 
 
 def make_group_tab(dataset_state: gr.State):
@@ -59,9 +67,25 @@ def make_group_tab(dataset_state: gr.State):
 
                 with gr.Accordion("Group Prompts"):
                     for model in CAPTION_MODELS:
-                        gr.Textbox(label=model, placeholder=f"{model} prompt", value=group_meta.group.prompt.get(model, ""))
+                        prompt_model = model
+                        def set_prompt(state, prompt, model=prompt_model):
+                            return set_group_prompt(state, model, prompt)
+
+                        prompt = gr.Textbox(label=model, placeholder=f"{model} prompt", value=group_meta.group.prompt.get(model, ""))
+                        gr.Button(f"Set {model} Prompt").click(fn=set_prompt, inputs=[group_state, prompt], outputs=[group_state])
 
                 with gr.Accordion("Group Taxonomy"):
+                    if len(group_meta.group.required_labels):
+                        gr.Markdown("### Required Labels")
+                        with gr.Row():
+                            for required_label in group_meta.group.required_labels:
+                                gr.Textbox(label="Required Label", value=required_label)
+
+                    with gr.Row():
+                        new_label = gr.Textbox(label="New Label", placeholder="New Label")
+                        add_label = gr.Button("Add Required Label")
+                        add_label.click(fn=add_group_label, inputs=[group_state, new_label], outputs=[group_state])
+
                     with gr.Row():
                         group_labels = count_group_labels(group_meta)
                         gr.Dataframe(
@@ -69,20 +93,16 @@ def make_group_tab(dataset_state: gr.State):
                             value=[[label, count] for label, count in group_labels.items()],
                         )
 
-                    with gr.Row():
-                        new_label = gr.Textbox(label="New Label", placeholder="New Label")
-                        add_label = gr.Button("Add Label")
-                        add_label.click(fn=add_group_label, inputs=[group_state, new_label], outputs=[group_state])
-
             with gr.Accordion("Group Images"):
                 group_images = list_group_images(state, active_group)
-                for image_name in group_images:
-                    target_name = image_name
-                    def select_image(state, image_name=target_name):
-                        return view_image(image_name, state)
+                with gr.Row():
+                    for image_name in group_images:
+                        target_name = image_name
+                        def select_image(state, image_name=target_name):
+                            return view_image(image_name, state)
 
-                    # label = path.basename(image)
-                    image = gr.Image(image_name) # , label=label)
-                    image.select(fn=select_image, inputs=[dataset_state], outputs=[dataset_state])
+                        # label = path.basename(image)
+                        image = gr.Image(image_name) # , label=label)
+                        image.select(fn=select_image, inputs=[dataset_state], outputs=[dataset_state])
 
     return tab_group
