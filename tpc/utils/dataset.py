@@ -3,9 +3,9 @@ from os import path
 from glob import glob
 
 
-from models import DatasetMeta, DatasetResults
+from models import DatasetMeta, AppState
 
-def count_dataset_groups(results: DatasetResults) -> Dict[str, int]:
+def count_dataset_groups(results: AppState) -> Dict[str, int]:
     """
     Count the number of images in each group in a dataset.
     """
@@ -29,7 +29,7 @@ def get_image_group(image: str, dataset: DatasetMeta) -> str:
     return group
 
 
-def list_dataset_groups(dataset: DatasetMeta) -> DatasetResults:
+def list_dataset_groups(dataset: DatasetMeta) -> AppState:
     """
     List all groups in a dataset.
     """
@@ -43,7 +43,7 @@ def list_dataset_groups(dataset: DatasetMeta) -> DatasetResults:
     groups = list(groups)
     groups.sort()
     print("Groups:", groups)
-    return DatasetResults(dataset=dataset, groups=groups, images=images)
+    return AppState(dataset=dataset, groups=groups, images=images)
 
 
 def list_dataset_images(dataset: DatasetMeta, groups: List[str] | None = None) -> List[str]:

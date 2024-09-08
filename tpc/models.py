@@ -46,7 +46,11 @@ class DatasetMeta:
 
 
 @dataclass
-class DatasetResults:
+class AppState:
     dataset: DatasetMeta
     groups: List[str]
     images: List[str]
+
+    # state stuff
+    # TODO: should this really go here?
+    active_group: str | None = None
