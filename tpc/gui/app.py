@@ -5,13 +5,14 @@ from .group import make_group_tab
 from .image import make_image_tab
 
 with gr.Blocks() as app:
-    state = gr.State()
+    app_state = gr.State()
+    group_state = gr.State()
 
     with gr.Tab("Dataset"):
-        make_dataset_tab(state)
+        make_dataset_tab(app_state)
 
     with gr.Tab("Group"):
-        make_group_tab(state)
+        make_group_tab(app_state, group_state)
 
     with gr.Tab("Image"):
-        make_image_tab(state)
+        make_image_tab(app_state, group_state)

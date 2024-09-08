@@ -10,8 +10,8 @@ def count_group_labels(group: GroupMetaFile) -> Dict[str, int]:
         label: 0 for label in group.group.required_labels
     }
 
-    for image in group.images:
-        for annotation in image.annotations:
+    for image_name, image_meta in group.images.items():
+        for annotation in image_meta.annotations:
             prev = labels.get(annotation.label, 0)
             labels[annotation.label] = prev + 1
 

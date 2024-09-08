@@ -45,10 +45,8 @@ def save_group_state(dataset_state: AppState, group_state: GroupMetaFile) -> Non
     save_group_meta(dataset_state.dataset, dataset_state.active_group, group_state)
 
 
-def make_group_tab(dataset_state: gr.State):
+def make_group_tab(dataset_state: gr.State, group_state: gr.State):
     with gr.Blocks() as tab_group:
-        group_state = gr.State()
-
         @gr.render(inputs=[dataset_state, group_state])
         def render_group(state: AppState, group_meta: GroupMetaFile):
             active_group = state.active_group or "none"
