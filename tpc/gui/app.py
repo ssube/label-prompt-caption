@@ -1,8 +1,8 @@
 import gradio as gr
 
 from .dataset import make_dataset_tab
-from .group import tab_group
-from .image import tab_image
+from .group import make_group_tab
+from .image import make_image_tab
 
 with gr.Blocks() as app:
     state = gr.State()
@@ -10,5 +10,8 @@ with gr.Blocks() as app:
     with gr.Tab("Dataset"):
         make_dataset_tab(state)
 
-    gr.Tab("Group", tab_group)
-    gr.Tab("Image", tab_image)
+    with gr.Tab("Group"):
+        make_group_tab(state)
+
+    with gr.Tab("Image"):
+        make_image_tab(state)

@@ -14,10 +14,11 @@ def load_dataset(name: str, path: str, image_formats: List[str]):
     return results
 
 
-def view_group(group: str, results: AppState) -> AppState:
+def view_group(group: str, state: AppState) -> AppState:
     print("Viewing group...", group)
-    results.active_group = group
-    return results
+    new_state = AppState(**state.__dict__)
+    new_state.active_group = group
+    return new_state
 
 
 def make_dataset_tab(dataset_state: gr.State):
@@ -35,8 +36,8 @@ def make_dataset_tab(dataset_state: gr.State):
             load.click(fn=load_dataset, inputs=[dataset_name, dataset_path, dataset_formats], outputs=[dataset_state])
 
         @gr.render(inputs=[dataset_state])
-        def render_groups(results):
-            if results is None:
+        def render_groups(state: AppState | None):
+            if state is None:
                 # placeholder when no dataset has been loaded
                 with gr.Row(variant="panel"):
                     gr.Textbox(label="Group Name", value="group size")
@@ -44,7 +45,7 @@ def make_dataset_tab(dataset_state: gr.State):
                 return
 
             # count items and display links to each group
-            group_counts = count_dataset_groups(results)
+            group_counts = count_dataset_groups(state)
             for group, count in group_counts.items():
                 with gr.Row(variant="panel"):
                     info = f"{count} images"
