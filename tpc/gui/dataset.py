@@ -20,35 +20,36 @@ def view_group(group: str, results: AppState) -> AppState:
     return results
 
 
-with gr.Blocks() as tab_dataset:
-    dataset_state = gr.State()
+def make_dataset_tab(dataset_state: gr.State):
+    with gr.Blocks() as tab_dataset:
+        gr.Markdown("### Dataset")
+        with gr.Row():
+            dataset_name = gr.Textbox(label="Dataset Name", placeholder="my_dataset")
 
-    gr.Markdown("### Dataset")
-    with gr.Row():
-        dataset_name = gr.Textbox(label="Dataset Name", placeholder="my_dataset")
+        with gr.Row():
+            dataset_path = gr.Textbox(label="Base Path", placeholder="path/to/images")
+            dataset_formats = gr.CheckboxGroup(["jpg", "jpeg", "png"], label="Image Formats")
 
-    with gr.Row():
-        dataset_path = gr.Textbox(label="Base Path", placeholder="path/to/images")
-        dataset_formats = gr.CheckboxGroup(["jpg", "jpeg", "png"], label="Image Formats")
+        with gr.Row():
+            load = gr.Button("Load Groups")
+            load.click(fn=load_dataset, inputs=[dataset_name, dataset_path, dataset_formats], outputs=[dataset_state])
 
-    with gr.Row():
-        load = gr.Button("Load Groups")
-        load.click(fn=load_dataset, inputs=[dataset_name, dataset_path, dataset_formats], outputs=[dataset_state])
+        @gr.render(inputs=[dataset_state])
+        def render_groups(results):
+            if results is None:
+                # placeholder when no dataset has been loaded
+                with gr.Row(variant="panel"):
+                    gr.Textbox(label="Group Name", value="group size")
+                    gr.Button("View Group", interactive=False)
+                return
 
-    @gr.render(inputs=[dataset_state])
-    def render_groups(results):
-        if results is None:
-            # placeholder when no dataset has been loaded
-            with gr.Row(variant="panel"):
-                gr.Textbox(label="Group Name", value="group size")
-                gr.Button("View Group", interactive=False)
-            return
+            # count items and display links to each group
+            group_counts = count_dataset_groups(results)
+            for group, count in group_counts.items():
+                with gr.Row(variant="panel"):
+                    info = f"{count} images"
+                    gr.Markdown(f"### {group}\n\n{info}")
+                    view = gr.Button("View Group")
+                    view.click(fn=lambda state: view_group(group, state), inputs=[dataset_state], outputs=[dataset_state])
 
-        # count items and display links to each group
-        group_counts = count_dataset_groups(results)
-        for group, count in group_counts.items():
-            with gr.Row(variant="panel"):
-                info = f"{count} images"
-                gr.Markdown(f"### {group}\n\n{info}")
-                view = gr.Button("View Group")
-                view.click(fn=lambda state: view_group(group, state), inputs=[dataset_state], outputs=[dataset_state])
+        return tab_dataset
