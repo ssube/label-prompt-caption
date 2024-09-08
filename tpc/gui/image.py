@@ -5,13 +5,11 @@ from models import AppState
 
 def make_image_tab(dataset_state: gr.State):
     with gr.Blocks() as tab_image:
-        gr.Markdown("Image stats, tag frequency, etc")
-
         @gr.render(inputs=[dataset_state])
         def render_image(state: AppState | None):
             with gr.Row():
                 if state is None or state.active_image is None:
-                    gr.Textbox(label="Image Path", placeholder="path/to/image.jpg")
+                    gr.Markdown("No image selected")
                     return
 
                 gr.Textbox(label="Image Path", value=state.active_image)

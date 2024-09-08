@@ -2,6 +2,7 @@ from typing import List
 
 import gradio as gr
 
+from args import IMAGE_FORMATS
 from models import DatasetMeta, AppState
 from utils.dataset import list_dataset_groups, count_dataset_groups
 
@@ -28,7 +29,7 @@ def make_dataset_tab(dataset_state: gr.State):
 
         with gr.Row():
             dataset_path = gr.Textbox(label="Base Path", placeholder="path/to/images")
-            dataset_formats = gr.CheckboxGroup(["jpg", "jpeg", "png"], label="Image Formats")
+            dataset_formats = gr.CheckboxGroup(choices=IMAGE_FORMATS, label="Image Formats", value=IMAGE_FORMATS)
 
         with gr.Row():
             load = gr.Button("Load Groups")
