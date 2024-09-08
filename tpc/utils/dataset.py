@@ -60,3 +60,17 @@ def list_dataset_images(dataset: DatasetMeta, groups: List[str] | None = None) -
     images.sort()
     print("Images:", images)
     return images
+
+
+def list_group_images(dataset: AppState, group: str) -> List[str]:
+    """
+    List images in a group in a dataset.
+    """
+    images = []
+    for image in dataset.images:
+        if get_image_group(image, dataset.dataset) == group:
+            images.append(image)
+
+    images.sort()
+    print("Group images:", images)
+    return images

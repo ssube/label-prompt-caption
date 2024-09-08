@@ -47,10 +47,16 @@ def make_dataset_tab(dataset_state: gr.State):
             # count items and display links to each group
             group_counts = count_dataset_groups(state)
             for group, count in group_counts.items():
+                # create a closure to capture the group name
+                target_group = group
+
+                def view_click(state, group=target_group):
+                    return view_group(group, state)
+
                 with gr.Row(variant="panel"):
                     info = f"{count} images"
                     gr.Markdown(f"### {group}\n\n{info}")
                     view = gr.Button("View Group")
-                    view.click(fn=lambda state: view_group(group, state), inputs=[dataset_state], outputs=[dataset_state])
+                    view.click(fn=view_click, inputs=[dataset_state], outputs=[dataset_state])
 
         return tab_dataset
