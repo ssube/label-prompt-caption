@@ -2,6 +2,7 @@ import gradio as gr
 from jinja2 import Environment
 
 from args import CAPTION_MODELS
+from caption_models import CAPTION_CALLBACKS
 from models import AppState, GroupMetaFile, ImageMeta, AnnotationMeta
 from utils.image import get_annotation_dict
 
@@ -29,6 +30,15 @@ def update_image_annotation(group_meta: GroupMetaFile, image: str, label: str, v
     new_group_meta = GroupMetaFile(**group_meta.__dict__)
     new_group_meta.images[image] = image_meta
     return new_group_meta
+
+
+def caption_image(image: str, model: str, prompt: str) -> str:
+    callback = CAPTION_CALLBACKS[model]
+    caption = callback(image, prompt)
+    print(f"Captioned image with {model}: {caption}")
+
+    # TODO: apply group caption template
+    return caption
 
 
 def make_image_tab(dataset_state: gr.State, group_state: gr.State):
@@ -72,19 +82,25 @@ def make_image_tab(dataset_state: gr.State, group_state: gr.State):
                     add = gr.Button("Add Annotation", scale=1)
                     add.click(fn=add_annotation, inputs=[group_state, label, value], outputs=[group_state])
 
+            with gr.Accordion("Image Caption"):
+                with gr.Row():
+                    caption = gr.Textbox(label="Image Caption", placeholder="Image caption", scale=3)
+                    gr.Button("Set Image Caption", scale=1)
+
             with gr.Accordion("Image Prompts"):
                 for model in CAPTION_MODELS:
                     with gr.Row():
+                        caption_model = str(model)
                         prompt_template = jinja.from_string(group_meta.group.prompt.get(model, "{{ caption }}"))
                         prompt_args = get_annotation_dict(image_meta)
                         prompt = prompt_template.render(**prompt_args, caption="{{ caption }}")
-                        gr.Textbox(label=model, value=prompt, scale=3)
-                        gr.Button(f"Caption with {model}", scale=1)
+                        def on_caption():
+                            print("Captioning with", caption_model, prompt)
+                            return caption_image(state.active_image, caption_model, prompt)
 
-            with gr.Accordion("Image Caption"):
-                with gr.Row():
-                    gr.Textbox(label="Image Caption", placeholder="Image caption", scale=3)
-                    gr.Button("Set Image Caption", scale=1)
+                        gr.Textbox(label=model, value=prompt, scale=3)
+                        do_caption = gr.Button(f"Caption with {model}", scale=1)
+                        do_caption.click(fn=on_caption, outputs=[caption])
 
             with gr.Row():
                 gr.Image(state.active_image, height=1024, width=1024)
