@@ -23,7 +23,6 @@ def view_group(group: str, state: AppState) -> AppState:
 
 def make_dataset_tab(dataset_state: gr.State):
     with gr.Blocks() as tab_dataset:
-        gr.Markdown("### Dataset")
         with gr.Row():
             dataset_name = gr.Textbox(label="Dataset Name", placeholder="my_dataset")
 

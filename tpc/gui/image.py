@@ -1,9 +1,19 @@
 import gradio as gr
 
-def make_image_tab(datset_state: gr.State):
+from models import AppState
+
+def make_image_tab(dataset_state: gr.State):
     with gr.Blocks() as tab_image:
-        gr.Markdown("### Image")
-        with gr.Row():
-            image_path = gr.Textbox(label="Image Path", placeholder="path/to/image.jpg")
+        gr.Markdown("Image stats, tag frequency, etc")
+
+        @gr.render(inputs=[dataset_state])
+        def render_image(state: AppState | None):
+            if state is None or state.active_image is None:
+                with gr.Row():
+                    gr.Textbox(label="Image Path", placeholder="path/to/image.jpg")
+                return
+
+            with gr.Row():
+                gr.Image(state.active_image)
 
     return tab_image

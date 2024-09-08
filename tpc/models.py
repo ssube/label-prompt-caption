@@ -54,3 +54,4 @@ class AppState:
     # state stuff
     # TODO: should this really go here?
     active_group: str | None = None
+    active_image: str | None = None
