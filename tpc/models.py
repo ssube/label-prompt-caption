@@ -6,12 +6,24 @@ else:
   from pydantic.dataclasses import dataclass
 
 
+from dataclasses import field
+
+
 @dataclass
 class BoundingBox:
-    top: int
-    left: int
-    width: int
-    height: int
+    # 2D bounds
+    top: float
+    left: float
+    width: float
+    height: float
+
+    # 3D bounds
+    front: float = 0
+    depth: float = 0
+
+    # video bounds
+    start: float = 0
+    end: float = 0
 
 
 @dataclass
@@ -23,33 +35,34 @@ class AnnotationMeta:
 
 @dataclass
 class ImageMeta:
-    annotations: List[AnnotationMeta]
+    annotations: List[AnnotationMeta] = field(default_factory=list)
 
 
 @dataclass
 class GroupMeta:
     caption: str
-    prompt: str = ''
+    prompt: Dict[str, str] = field(default_factory=dict)
+    required_labels: List[str] = field(default_factory=list)
 
 
 @dataclass
 class GroupMetaFile:
     group: GroupMeta
-    images: Dict[str, ImageMeta]
+    images: Dict[str, ImageMeta] = field(default_factory=dict)
 
 
 @dataclass
 class DatasetMeta:
-   image_formats: List[str]
    name: str
    path: str
+   image_formats: List[str] = field(default_factory=list)
 
 
 @dataclass
 class AppState:
     dataset: DatasetMeta
-    groups: List[str]
-    images: List[str]
+    groups: List[str] = field(default_factory=list)
+    images: List[str] = field(default_factory=list)
 
     # state stuff
     # TODO: should this really go here?

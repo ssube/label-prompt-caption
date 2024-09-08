@@ -1,0 +1,1 @@
+CAPTION_MODELS = ["Joy", "Florence", "CLIP"]
