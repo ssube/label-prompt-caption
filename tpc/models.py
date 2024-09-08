@@ -43,3 +43,10 @@ class DatasetMeta:
    image_formats: List[str]
    name: str
    path: str
+
+
+@dataclass
+class DatasetResults:
+    dataset: DatasetMeta
+    groups: List[str]
+    images: List[str]

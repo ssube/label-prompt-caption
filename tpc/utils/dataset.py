@@ -1,11 +1,35 @@
-from typing import List
+from typing import List, Dict
 from os import path
 from glob import glob
 
 
-from models import DatasetMeta
+from models import DatasetMeta, DatasetResults
 
-def list_dataset_groups(dataset: DatasetMeta) -> List[str]:
+def count_dataset_groups(results: DatasetResults) -> Dict[str, int]:
+    """
+    Count the number of images in each group in a dataset.
+    """
+    group_counts = {}
+    for group in results.groups:
+        group_counts[group] = 0
+
+    for image in results.images:
+        group = get_image_group(image, results.dataset)
+        group_counts[group] += 1
+
+    print("Group counts:", group_counts)
+    return group_counts
+
+
+def get_image_group(image: str, dataset: DatasetMeta) -> str:
+    """
+    Get the group of an image in a dataset.
+    """
+    group = path.dirname(image).removeprefix(dataset.path).removeprefix(path.sep)
+    return group
+
+
+def list_dataset_groups(dataset: DatasetMeta) -> DatasetResults:
     """
     List all groups in a dataset.
     """
@@ -13,11 +37,13 @@ def list_dataset_groups(dataset: DatasetMeta) -> List[str]:
 
     images = list_dataset_images(dataset)
     for image in images:
-        group = path.dirname(image).removeprefix(dataset.path).removeprefix(path.sep)
+        group = get_image_group(image, dataset)
         groups.add(group)
 
+    groups = list(groups)
+    groups.sort()
     print("Groups:", groups)
-    return list(groups)
+    return DatasetResults(dataset=dataset, groups=groups, images=images)
 
 
 def list_dataset_images(dataset: DatasetMeta, groups: List[str] | None = None) -> List[str]:
@@ -29,5 +55,8 @@ def list_dataset_images(dataset: DatasetMeta, groups: List[str] | None = None) -
     for format in dataset.image_formats:
         images.extend(glob(path.join(dataset.path, "**", f"*.{format}"), recursive=True))
 
+    # TODO: filter by groups
+
+    images.sort()
     print("Images:", images)
     return images

@@ -1,10 +1,7 @@
 import gradio as gr
 
 from .dataset import tab_dataset
+from .group import tab_group
+from .image import tab_image
 
-def image_classifier(image):
-    return "label"
-
-tab_group = gr.Interface(fn=image_classifier, inputs="image", outputs="label")
-
-app = gr.TabbedInterface([tab_dataset, tab_group], ["Dataset", "Group"])
+app = gr.TabbedInterface([tab_dataset, tab_group, tab_image], ["Dataset", "Group", "Image"])
