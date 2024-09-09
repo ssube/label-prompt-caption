@@ -1,9 +1,12 @@
-from .clip import caption_with_clip
-from .florence import caption_with_florence
 from .joy import caption_with_joy
+from .florence import caption_with_florence
+from .wd import caption_with_wd, caption_with_dd, caption_with_mld
 
 CAPTION_CALLBACKS = {
-    "CLIP": caption_with_clip,
     "Florence": caption_with_florence,
     "Joy": caption_with_joy,
+    # older tag models
+    "DeepDanbooru": caption_with_dd,
+    "MLDanbooru": caption_with_mld,
+    "WaifuDiffusion": caption_with_wd,
 }

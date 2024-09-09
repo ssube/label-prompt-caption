@@ -90,13 +90,13 @@ def make_image_tab(dataset_state: gr.State, group_state: gr.State):
             with gr.Accordion("Image Prompts"):
                 for model in CAPTION_MODELS:
                     with gr.Row():
-                        caption_model = str(model)
+                        # caption_model = str(model)
                         prompt_template = jinja.from_string(group_meta.group.prompt.get(model, "{{ caption }}"))
                         prompt_args = get_annotation_dict(image_meta)
                         prompt = prompt_template.render(**prompt_args, caption="{{ caption }}")
-                        def on_caption():
-                            print("Captioning with", caption_model, prompt)
-                            return caption_image(state.active_image, caption_model, prompt)
+                        def on_caption(image=state.active_image, model=model, prompt=prompt):
+                            print("Captioning with", image, model, prompt)
+                            return caption_image(image, model, prompt)
 
                         gr.Textbox(label=model, value=prompt, scale=3)
                         do_caption = gr.Button(f"Caption with {model}", scale=1)
