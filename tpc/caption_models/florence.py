@@ -47,4 +47,7 @@ def caption_with_florence(image_name: str, prompt: str) -> str:
         image_size=(image.width, image.height)
     )
 
-    return parsed_answer
+    if task_prompt not in parsed_answer:
+        print(f"Reply for {task_prompt} not found in generated text {parsed_answer}")
+
+    return parsed_answer[task_prompt]
