@@ -101,7 +101,7 @@ def make_image_tab(dataset_state: gr.State, group_state: gr.State):
                         prompt = prompt_template.render(**prompt_args, caption="{{ caption }}")
                         def on_caption(image=state.active_image, model=model, prompt=prompt):
                             print("Captioning with", image, model, prompt)
-                            return caption_image(image, model, prompt)
+                            return caption_image(group_meta, image, model, prompt)
 
                         gr.Textbox(label=model, value=prompt, scale=3)
                         do_caption = gr.Button(f"Caption with {model}", scale=1)
