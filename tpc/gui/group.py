@@ -52,16 +52,30 @@ def save_group_state(dataset_state: AppState, group_state: GroupMetaFile) -> Non
     save_group_meta(dataset_state.dataset, dataset_state.active_group, group_state)
 
 
+def get_active_or_first_group(state: AppState | None) -> str | None:
+    if state is None:
+        return None
+
+    if state.active_group:
+        return state.active_group
+
+    if len(state.groups):
+        return state.groups[0]
+
+    return None
+
+
 def make_group_tab(dataset_state: gr.State, group_state: gr.State):
     with gr.Blocks() as tab_group:
         @gr.render(inputs=[dataset_state, group_state])
         def render_group(state: AppState | None, group_meta: GroupMetaFile | None):
-            if state is None or state.active_group is None:
+            active_group = get_active_or_first_group(state)
+
+            if state is None or active_group is None:
                 with gr.Row():
                     gr.Textbox(label="Group Name", value="none")
                     return
 
-            active_group = state.active_group or "none"
             print("Rendering group...", active_group)
 
             with gr.Row():
@@ -81,7 +95,7 @@ def make_group_tab(dataset_state: gr.State, group_state: gr.State):
             with gr.Row():
                 caption = gr.Textbox(label="Group Caption", value=group_meta.group.caption, interactive=True, scale=3)
                 set_caption = gr.Button("Set Group Caption", scale=1)
-                set_caption.click(fn=set_group_caption, inputs=[group_state, caption], outputs=[group_state])
+                set_caption.click(fn=lambda c: set_group_caption(group_meta, c), inputs=[caption], outputs=[group_state])
 
             with gr.Accordion("Group Prompts"):
                 for model in CAPTION_MODELS:
@@ -91,7 +105,7 @@ def make_group_tab(dataset_state: gr.State, group_state: gr.State):
                             return set_group_prompt(state, model, prompt)
 
                         prompt = gr.Textbox(label=model, placeholder=f"{model} prompt", scale=3, value=group_meta.group.prompt.get(model, ""))
-                        gr.Button(f"Set {model} Prompt", scale=1).click(fn=set_prompt, inputs=[group_state, prompt], outputs=[group_state])
+                        gr.Button(f"Set {model} Prompt", scale=1).click(fn=lambda p: set_prompt(group_meta, p), inputs=[prompt], outputs=[group_state])
 
             with gr.Accordion("Group Taxonomy"):
                 if len(group_meta.group.required_labels):
@@ -100,12 +114,12 @@ def make_group_tab(dataset_state: gr.State, group_state: gr.State):
                         with gr.Row():
                             label = gr.Textbox(label="Required Label", scale=3, value=required_label)
                             remove_label = gr.Button("Remove Required Label", scale=1)
-                            remove_label.click(fn=remove_group_label, inputs=[group_state, label], outputs=[group_state])
+                            remove_label.click(fn=lambda l: remove_group_label(group_meta, l), inputs=[label], outputs=[group_state])
 
                 with gr.Row():
                     new_label = gr.Textbox(label="New Label", placeholder="New Label", scale=3)
                     add_label = gr.Button("Add Required Label", scale=1)
-                    add_label.click(fn=add_group_label, inputs=[group_state, new_label], outputs=[group_state])
+                    add_label.click(fn=lambda l: add_group_label(group_meta, l), inputs=[new_label], outputs=[group_state])
 
                 with gr.Row():
                     group_labels = count_group_labels(group_meta)
