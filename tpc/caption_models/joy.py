@@ -1,8 +1,13 @@
 from PIL import Image
 from torch import nn
+from os import environ
 import torch
 
 from args import MODEL_DEVICE, MODEL_FORMAT
+
+LLAMA_FREE = "cognitivecomputations/dolphin-2.9.4-llama3.1-8b"
+LLAMA_GATED = "meta-llama/Meta-Llama-3.1-8B"
+LLAMA_MODEL = environ.get("LPC_LLAMA_MODEL", LLAMA_GATED)
 
 class ImageAdapter(nn.Module):
     def __init__(self, input_features: int, output_features: int):
@@ -23,7 +28,7 @@ image_adapter = None
 llama_model = None
 llama_tokenizer = None
 
-def load_joy(clip_name="google/siglip-so400m-patch14-384", model_name="meta-llama/Meta-Llama-3.1-8B"):
+def load_joy(clip_name="google/siglip-so400m-patch14-384", model_name=LLAMA_MODEL):
     global clip_model, clip_processor, image_adapter, llama_model, llama_tokenizer
 
     from huggingface_hub import hf_hub_download
