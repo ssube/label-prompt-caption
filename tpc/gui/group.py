@@ -49,13 +49,13 @@ def make_group_tab(dataset_state: gr.State, group_state: gr.State):
     with gr.Blocks() as tab_group:
         @gr.render(inputs=[dataset_state, group_state])
         def render_group(state: AppState, group_meta: GroupMetaFile):
-            active_group = state.active_group or "none"
-            print("Rendering group...", active_group)
-
             if state is None or state.active_group is None:
                 with gr.Row():
                     gr.Textbox(label="Group Name", value="none")
                     return
+
+            active_group = state.active_group or "none"
+            print("Rendering group...", active_group)
 
             with gr.Row():
                 gr.Textbox(label="Group Name", value=active_group)
