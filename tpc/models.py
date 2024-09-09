@@ -53,7 +53,7 @@ class GroupMetaFile:
 
 @dataclass
 class DatasetMeta:
-   name: str
+   # name: str
    path: str
    image_formats: List[str] = field(default_factory=list)
 

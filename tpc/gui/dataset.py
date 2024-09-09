@@ -7,9 +7,9 @@ from models import DatasetMeta, AppState
 from utils.dataset import list_dataset_groups, count_dataset_groups
 
 
-def load_dataset(name: str, path: str, image_formats: List[str]):
-    print("Loading dataset...", name, path, image_formats)
-    dataset = DatasetMeta(name=name, path=path, image_formats=image_formats)
+def load_dataset(path: str, image_formats: List[str]):
+    print("Loading dataset...", path, image_formats)
+    dataset = DatasetMeta(path=path, image_formats=image_formats)
     results = list_dataset_groups(dataset)
     print("Results:", results)
     return results
@@ -35,7 +35,7 @@ def make_dataset_tab(args: Args, dataset_state: gr.State):
 
         with gr.Row():
             load = gr.Button("Load Groups")
-            load.click(fn=load_dataset, inputs=[dataset_name, dataset_path, dataset_formats], outputs=[dataset_state])
+            load.click(fn=load_dataset, inputs=[dataset_path, dataset_formats], outputs=[dataset_state])
 
         @gr.render(inputs=[dataset_state])
         def render_groups(state: AppState | None):
