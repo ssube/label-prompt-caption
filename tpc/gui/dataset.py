@@ -1,10 +1,11 @@
-from typing import List
+from typing import List, Tuple
 
 import gradio as gr
 
 from args import IMAGE_FORMATS
-from models import DatasetMeta, AppState
+from models import DatasetMeta, AppState, GroupMetaFile
 from utils.dataset import list_dataset_groups, count_dataset_groups
+from utils.group import load_group_meta
 
 
 def load_dataset(name: str, path: str, image_formats: List[str]):
@@ -15,14 +16,16 @@ def load_dataset(name: str, path: str, image_formats: List[str]):
     return results
 
 
-def view_group(group: str, state: AppState) -> AppState:
+def view_group(group: str, state: AppState) -> Tuple[AppState, GroupMetaFile]:
     print("Viewing group...", group)
     new_state = AppState(**state.__dict__)
     new_state.active_group = group
-    return new_state
+
+    group_state = load_group_meta(new_state.dataset, group)
+    return new_state, group_state
 
 
-def make_dataset_tab(dataset_state: gr.State):
+def make_dataset_tab(dataset_state: gr.State, group_state: gr.State):
     with gr.Blocks() as tab_dataset:
         with gr.Row():
             dataset_name = gr.Textbox(label="Dataset Name", placeholder="my_dataset")
@@ -35,8 +38,8 @@ def make_dataset_tab(dataset_state: gr.State):
             load = gr.Button("Load Groups")
             load.click(fn=load_dataset, inputs=[dataset_name, dataset_path, dataset_formats], outputs=[dataset_state])
 
-        @gr.render(inputs=[dataset_state])
-        def render_groups(state: AppState | None):
+        @gr.render(inputs=[dataset_state, group_state])
+        def render_groups(state: AppState | None, group_meta: GroupMetaFile | None):
             if state is None:
                 # placeholder when no dataset has been loaded
                 with gr.Row(variant="panel"):
@@ -57,6 +60,6 @@ def make_dataset_tab(dataset_state: gr.State):
                     info = f"{count} images"
                     gr.Markdown(f"### {group}\n\n{info}")
                     view = gr.Button("View Group")
-                    view.click(fn=view_click, inputs=[dataset_state], outputs=[dataset_state])
+                    view.click(fn=view_click, inputs=[dataset_state], outputs=[dataset_state, group_state])
 
         return tab_dataset

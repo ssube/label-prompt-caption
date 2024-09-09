@@ -82,9 +82,9 @@ def make_group_tab(dataset_state: gr.State, group_state: gr.State):
             print("Rendering group...", active_group)
 
             with gr.Row():
-                gr.Button("Previous Group", scale=1)
+                gr.Button("Previous Group", scale=1, interactive=False)
                 gr.Textbox(label="Group Name", value=active_group, scale=4)
-                gr.Button("Next Group", scale=1)
+                gr.Button("Next Group", scale=1, interactive=False)
 
             with gr.Row():
                 load = gr.Button("Load Group Meta")
@@ -93,7 +93,9 @@ def make_group_tab(dataset_state: gr.State, group_state: gr.State):
                 save.click(fn=save_group_state, inputs=[dataset_state, group_state])
 
             if not group_meta:
-                group_meta = load_group_state(state, active_group)
+                gr.Markdown("### No group metadata loaded.")
+                return
+                # group_meta = load_group_state(state, active_group)
 
             with gr.Accordion("Group Captions"):
                 with gr.Row():
@@ -103,7 +105,7 @@ def make_group_tab(dataset_state: gr.State, group_state: gr.State):
 
                 with gr.Row():
                     for model in CAPTION_MODELS:
-                        gr.Button(f"Caption group with {model}")
+                        gr.Button(f"Caption group with {model}", interactive=False)
 
             with gr.Accordion("Group Prompts"):
                 for model in CAPTION_MODELS:
