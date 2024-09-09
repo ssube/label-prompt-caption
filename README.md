@@ -89,3 +89,12 @@ Open the web UI in your browser. A link to the web UI will be shown in the logs,
     3. The `Strip Partial Phrases` button will remove any text after the last `.`, in case the captioning model returned
        an incomplete phrase at the end of the prompt
 16. Press the `Save Image Caption` button to save the caption to a `.txt` file
+
+### Configuration
+
+If you are not comfortable sharing your contact information with Meta, you can use an alternative Llama model by
+setting the `LPC_LLAMA_MODEL` environment variable. For example:
+
+```shell
+> export LPC_LLAMA_MODEL=cognitivecomputations/dolphin-2.9.4-llama3.1-8b
+```
