@@ -55,7 +55,7 @@ def load_joy(clip_name=CLIP_MODEL, model_name=LLAMA_MODEL):
 
     # Image Adapter
     print("Loading image adapter")
-    adapter_path = hf_hub_download("fancyfeast/joy-caption-pre-alpha", subfolder="wpkklhc6", filename="image_adapter.pt", repo_type="spaces")
+    adapter_path = hf_hub_download("fancyfeast/joy-caption-pre-alpha", subfolder="wpkklhc6", filename="image_adapter.pt", repo_type="space")
     image_adapter = ImageAdapter(clip_model.config.hidden_size, llama_model.config.hidden_size)
     image_adapter.load_state_dict(torch.load(adapter_path, map_location="cpu"))
     image_adapter.eval()
