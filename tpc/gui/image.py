@@ -1,5 +1,6 @@
 import gradio as gr
 from jinja2 import Environment
+from random import shuffle
 
 from args import CAPTION_MODELS
 from caption_models import CAPTION_CALLBACKS
@@ -42,6 +43,25 @@ def caption_image(group_meta: GroupMetaFile, image: str, model: str, prompt: str
     caption_args = get_annotation_dict(group_meta.images[image])
     caption = caption_template.render(**caption_args, caption=model_caption)
     return caption
+
+
+def shuffle_caption(caption: str) -> str:
+    print("Shuffling caption...", caption)
+    caption = caption.removesuffix(".")
+    phrases = caption.split(", ")
+    shuffle(phrases)
+    return ", ".join(phrases) + "."
+
+
+def merge_caption(caption: str) -> str:
+    print("Merging caption...", caption)
+    return caption.replace("\n", " ")
+
+
+def strip_caption(caption: str) -> str:
+    print("Stripping caption...", caption)
+    # remove everything after the last .
+    return caption.rsplit(".", 1)[0]
 
 
 def make_image_tab(dataset_state: gr.State, group_state: gr.State):
@@ -93,6 +113,16 @@ def make_image_tab(dataset_state: gr.State, group_state: gr.State):
                     caption = gr.Textbox(label="Image Caption", value=image_caption, interactive=True, scale=3)
                     set_caption = gr.Button("Save Image Caption", scale=1)
                     set_caption.click(fn=lambda caption: save_image_caption(state.active_image, caption), inputs=[caption])
+
+                with gr.Row():
+                    shuffle_button = gr.Button("Shuffle Phrases")
+                    shuffle_button.click(fn=shuffle_caption, inputs=[caption], outputs=[caption])
+
+                    newline_button = gr.Button("Remove Newlines")
+                    newline_button.click(fn=merge_caption, inputs=[caption], outputs=[caption])
+
+                    strip_button = gr.Button("Strip Partial Phrases")
+                    strip_button.click(fn=strip_caption, inputs=[caption], outputs=[caption])
 
 
             with gr.Accordion("Image Prompts"):
