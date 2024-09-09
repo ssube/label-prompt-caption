@@ -23,9 +23,7 @@ def unload_florence():
 def caption_with_florence(image_name: str, prompt: str) -> str:
     # The task prompt is the leading <FOO> tag
     task_prompt = sub(r"<[A-Z]+>", "$1", prompt)
-
-    with open(image_name, "rb") as image_file:
-        image = Image.open(image_file)
+    image = Image.open(image_name)
 
     print("Captioning with Florence...", task_prompt, prompt, image)
     # return "A caption for the image using Florence"

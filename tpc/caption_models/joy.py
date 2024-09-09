@@ -58,9 +58,7 @@ def load_joy(clip_name="google/siglip-so400m-patch14-384", model_name="meta-llam
 
 @torch.no_grad()
 def caption_with_joy(image_name: str, prompt: str) -> str:
-    with open(image_name, "rb") as image_file:
-        image = Image.open(image_file)
-
+    image = Image.open(image_name)
     print("Captioning with Joy...", prompt, image)
     # return "A caption for the image using Joy"
 
