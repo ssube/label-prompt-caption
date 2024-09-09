@@ -1,5 +1,5 @@
 import gradio as gr
-# from os import path
+from os import path
 
 from ..args import Args
 from ..models import AppState, GroupMetaFile
@@ -145,8 +145,8 @@ def make_group_tab(args: Args, dataset_state: gr.State, group_state: gr.State):
                         def select_image(state, image_name=target_name):
                             return view_image(image_name, state)
 
-                        # label = path.basename(image)
-                        image = gr.Image(image_name) # , label=label)
+                        label = path.basename(image)
+                        image = gr.Image(image_name, label=label)
                         image.select(fn=select_image, inputs=[dataset_state], outputs=[dataset_state])
 
     return tab_group

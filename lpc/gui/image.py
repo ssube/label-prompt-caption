@@ -36,7 +36,7 @@ def update_image_annotation(group_meta: GroupMetaFile, image: str, label: str, v
     return new_group_meta
 
 
-def caption_image(group_meta: GroupMetaFile, image: str, model: str, prompt: str) -> str:
+def caption_image(group_meta: GroupMetaFile, image: str, model: str, prompt: str, prefix: str | None = None) -> str:
     image_name = path.basename(image)
     callback = CAPTION_CALLBACKS[model]
     model_caption = callback(image, prompt)
@@ -49,6 +49,9 @@ def caption_image(group_meta: GroupMetaFile, image: str, model: str, prompt: str
         caption_args = get_annotation_dict(group_meta.images[image_name])
 
     caption = caption_template.render(**caption_args, caption=model_caption)
+    if prefix:
+        caption = prefix + caption
+
     return caption
 
 
@@ -132,6 +135,10 @@ def make_image_tab(args: Args, dataset_state: gr.State, group_state: gr.State):
                     strip_button = gr.Button("Strip Partial Phrases")
                     strip_button.click(fn=strip_caption, inputs=[caption], outputs=[caption])
 
+                with gr.Row():
+                    question = gr.Textbox(label="Question", scale=3)
+                    answer = gr.Button("Answer with Moondream", scale=1)
+                    answer.click(fn=lambda prev, question: caption_image(group_meta, state.active_image, "moondream", question, prefix=prev), inputs=[caption, question], outputs=[caption])
 
             with gr.Accordion("Image Prompts"):
                 for model in args.caption_models:
