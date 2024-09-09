@@ -27,6 +27,9 @@ def caption_with_moondream(image_name: str, prompt: str) -> str:
     image = Image.open(image_name)
     print("Captioning with Moondream...", prompt, image)
 
+    if not model or not tokenizer:
+        load_moondream()
+
     image_embeds = model.encode_image(image)
     caption = model.answer_question(image_embeds, prompt, tokenizer)
     return caption
