@@ -110,12 +110,11 @@ def make_group_tab(dataset_state: gr.State, group_state: gr.State):
             with gr.Accordion("Group Prompts"):
                 for model in CAPTION_MODELS:
                     with gr.Row():
-                        prompt_model = model
-                        def set_prompt(state, prompt, model=prompt_model):
+                        def set_prompt(prompt, model=model, state=group_meta):
                             return set_group_prompt(state, model, prompt)
 
                         prompt = gr.Textbox(label=model, placeholder=f"{model} prompt", scale=3, value=group_meta.group.prompt.get(model, ""))
-                        gr.Button(f"Set {model} Prompt", scale=1).click(fn=lambda p: set_prompt(group_meta, p), inputs=[prompt], outputs=[group_state])
+                        gr.Button(f"Set {model} Prompt", scale=1).click(fn=set_prompt, inputs=[prompt], outputs=[group_state])
 
             with gr.Accordion("Group Taxonomy"):
                 if len(group_meta.group.required_labels):
