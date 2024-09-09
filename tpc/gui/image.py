@@ -40,7 +40,10 @@ def caption_image(group_meta: GroupMetaFile, image: str, model: str, prompt: str
 
     # apply group caption template
     caption_template = jinja.from_string(group_meta.group.caption)
-    caption_args = get_annotation_dict(group_meta.images[image])
+    caption_args = {}
+    if image in group_meta.images:
+        caption_args = get_annotation_dict(group_meta.images[image])
+
     caption = caption_template.render(**caption_args, caption=model_caption)
     return caption
 
