@@ -138,7 +138,7 @@ def make_image_tab(args: Args, dataset_state: gr.State, group_state: gr.State):
                 with gr.Row():
                     question = gr.Textbox(label="Question", scale=3)
                     answer = gr.Button("Answer with Moondream", scale=1)
-                    answer.click(fn=lambda prev, question: caption_image(group_meta, state.active_image, "moondream", question, prefix=prev), inputs=[caption, question], outputs=[caption])
+                    answer.click(fn=lambda prev, question: caption_image(group_meta, state.active_image, "Moondream", question, prefix=prev), inputs=[caption, question], outputs=[caption])
 
             with gr.Accordion("Image Prompts"):
                 for model in args.caption_models:
