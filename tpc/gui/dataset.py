@@ -16,16 +16,16 @@ def load_dataset(name: str, path: str, image_formats: List[str]):
     return results
 
 
-def view_group(group: str, state: AppState) -> Tuple[AppState, GroupMetaFile]:
+def view_group(group: str, state: AppState) -> AppState:
     print("Viewing group...", group)
     new_state = AppState(**state.__dict__)
     new_state.active_group = group
 
-    group_state = load_group_meta(new_state.dataset, group)
-    return new_state, group_state
+    # group_state = load_group_meta(new_state.dataset, group)
+    return new_state
 
 
-def make_dataset_tab(dataset_state: gr.State, group_state: gr.State):
+def make_dataset_tab(dataset_state: gr.State):
     with gr.Blocks() as tab_dataset:
         with gr.Row():
             dataset_name = gr.Textbox(label="Dataset Name", placeholder="my_dataset")
@@ -38,7 +38,7 @@ def make_dataset_tab(dataset_state: gr.State, group_state: gr.State):
             load = gr.Button("Load Groups")
             load.click(fn=load_dataset, inputs=[dataset_name, dataset_path, dataset_formats], outputs=[dataset_state])
 
-        @gr.render(inputs=[dataset_state, group_state])
+        @gr.render(inputs=[dataset_state])
         def render_groups(state: AppState | None, group_meta: GroupMetaFile | None):
             if state is None:
                 # placeholder when no dataset has been loaded
@@ -60,6 +60,6 @@ def make_dataset_tab(dataset_state: gr.State, group_state: gr.State):
                     info = f"{count} images"
                     gr.Markdown(f"### {group}\n\n{info}")
                     view = gr.Button("View Group")
-                    view.click(fn=view_click, inputs=[dataset_state], outputs=[dataset_state, group_state])
+                    view.click(fn=view_click, inputs=[dataset_state], outputs=[dataset_state])
 
         return tab_dataset
