@@ -75,7 +75,7 @@ def make_group_tab(dataset_state: gr.State, group_state: gr.State):
 
             if group_meta:
                 with gr.Row():
-                    caption = gr.Textbox(label="Group Caption", placeholder="Group caption", scale=3)
+                    caption = gr.Textbox(label="Group Caption", value=group_meta.group.caption, interactive=True, scale=3)
                     set_caption = gr.Button("Set Group Caption", scale=1)
                     set_caption.click(fn=set_group_caption, inputs=[group_state, caption], outputs=[group_state])
 
