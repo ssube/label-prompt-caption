@@ -3,7 +3,7 @@ from torch import nn
 from os import environ
 import torch
 
-from args import MODEL_DEVICE, MODEL_FORMAT
+from ..args import MODEL_DEVICE, MODEL_FORMAT
 
 CLIP_MODEL = "google/siglip-so400m-patch14-384"
 LLAMA_FREE = "cognitivecomputations/dolphin-2.9.4-llama3.1-8b"

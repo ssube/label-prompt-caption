@@ -1,7 +1,7 @@
 import gradio as gr
 
-from args import parse_args
-from models import AppState
+from ..args import parse_args
+from ..models import AppState
 from .dataset import make_dataset_tab
 from .group import make_group_tab
 from .image import make_image_tab

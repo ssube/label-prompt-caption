@@ -3,7 +3,7 @@ from os import path
 from glob import glob
 
 
-from models import DatasetMeta, AppState
+from ..models import DatasetMeta, AppState
 
 def count_dataset_groups(results: AppState) -> Dict[str, int]:
     """

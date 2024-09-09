@@ -2,10 +2,10 @@ import gradio as gr
 from jinja2 import Environment
 from random import shuffle
 
-from args import Args
-from caption_models import CAPTION_CALLBACKS
-from models import AppState, GroupMetaFile, ImageMeta, AnnotationMeta
-from utils.image import get_annotation_dict, load_image_caption, save_image_caption
+from ..args import Args
+from ..caption_models import CAPTION_CALLBACKS
+from ..models import AppState, GroupMetaFile, ImageMeta, AnnotationMeta
+from ..utils.image import get_annotation_dict, load_image_caption, save_image_caption
 
 
 jinja = Environment()

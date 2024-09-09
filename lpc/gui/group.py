@@ -1,10 +1,10 @@
 import gradio as gr
 # from os import path
 
-from args import Args
-from models import AppState, GroupMetaFile
-from utils.dataset import list_group_images
-from utils.group import count_group_labels, load_group_meta, save_group_meta
+from ..args import Args
+from ..models import AppState, GroupMetaFile
+from ..utils.dataset import list_group_images
+from ..utils.group import count_group_labels, load_group_meta, save_group_meta
 
 def view_image(image: str, state: AppState) -> AppState:
     print("Viewing image...", image)
@@ -87,9 +87,9 @@ def make_group_tab(args: Args, dataset_state: gr.State, group_state: gr.State):
                 gr.Button("Next Group", scale=1, interactive=False)
 
             with gr.Row():
-                load = gr.Button("Load Group Meta")
+                load = gr.Button("Load Group")
                 load.click(fn=load_group_state, inputs=[dataset_state], outputs=[group_state])
-                save = gr.Button("Save Group Meta")
+                save = gr.Button("Save Group")
                 save.click(fn=save_group_state, inputs=[dataset_state, group_state])
 
             if not group_meta:

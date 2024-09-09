@@ -1,6 +1,7 @@
-from args import MODEL_DEVICE, MODEL_FORMAT
 from PIL import Image
 from re import sub
+
+from ..args import MODEL_DEVICE, MODEL_FORMAT
 
 model = None
 processor = None

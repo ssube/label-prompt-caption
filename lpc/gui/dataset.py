@@ -2,9 +2,9 @@ from typing import List
 
 import gradio as gr
 
-from args import Args
-from models import DatasetMeta, AppState
-from utils.dataset import list_dataset_groups, count_dataset_groups
+from ..args import Args
+from ..models import DatasetMeta, AppState
+from ..utils.dataset import list_dataset_groups, count_dataset_groups
 
 
 def load_dataset(path: str, image_formats: List[str]):

@@ -2,8 +2,8 @@ from typing import Dict
 from os import path
 from yaml import load, Loader, dump
 
-from args import GROUP_FILE
-from models import GroupMetaFile, DatasetMeta, GroupMeta
+from ..args import GROUP_FILE
+from ..models import GroupMetaFile, DatasetMeta, GroupMeta
 
 def count_group_labels(group: GroupMetaFile) -> Dict[str, int]:
     labels = {
