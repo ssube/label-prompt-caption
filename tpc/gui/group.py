@@ -27,6 +27,13 @@ def remove_group_label(group_state: GroupMetaFile, label: str) -> GroupMetaFile:
     return new_group_state
 
 
+def set_group_caption(group_state: GroupMetaFile, caption: str) -> GroupMetaFile:
+    print("Setting caption...", caption)
+    new_group_state = GroupMetaFile(**group_state.__dict__)
+    new_group_state.group.caption = caption
+    return new_group_state
+
+
 def set_group_prompt(group_state: GroupMetaFile, model: str, prompt: str) -> GroupMetaFile:
     print("Setting prompt...", model, prompt)
     new_group_state = GroupMetaFile(**group_state.__dict__)
@@ -68,7 +75,9 @@ def make_group_tab(dataset_state: gr.State, group_state: gr.State):
 
             if group_meta:
                 with gr.Row():
-                    gr.Textbox(label="Group Caption", placeholder="Group caption")
+                    caption = gr.Textbox(label="Group Caption", placeholder="Group caption", scale=3)
+                    set_caption = gr.Button("Set Group Caption", scale=1)
+                    set_caption.click(fn=set_group_caption, inputs=[group_state, caption], outputs=[group_state])
 
                 with gr.Accordion("Group Prompts"):
                     for model in CAPTION_MODELS:

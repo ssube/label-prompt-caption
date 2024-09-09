@@ -1,11 +1,10 @@
 import gradio as gr
 from jinja2 import Environment
-from os import path
 
 from args import CAPTION_MODELS
 from caption_models import CAPTION_CALLBACKS
 from models import AppState, GroupMetaFile, ImageMeta, AnnotationMeta
-from utils.image import get_annotation_dict
+from utils.image import get_annotation_dict, load_image_caption, save_image_caption
 
 
 jinja = Environment()
@@ -33,30 +32,16 @@ def update_image_annotation(group_meta: GroupMetaFile, image: str, label: str, v
     return new_group_meta
 
 
-def caption_image(image: str, model: str, prompt: str) -> str:
+def caption_image(group_meta: GroupMetaFile, image: str, model: str, prompt: str) -> str:
     callback = CAPTION_CALLBACKS[model]
-    caption = callback(image, prompt)
-    print(f"Captioned image with {model}: {caption}")
+    model_caption = callback(image, prompt)
+    print(f"Captioned image with {model}: {model_caption}")
 
-    # TODO: apply group caption template
+    # apply group caption template
+    caption_template = jinja.from_string(group_meta.group.caption)
+    caption_args = get_annotation_dict(group_meta.images[image])
+    caption = caption_template.render(**caption_args, caption=model_caption)
     return caption
-
-
-def load_image_caption(image: str) -> str:
-    caption_file = path.splitext(image)[0] + ".txt"
-
-    try:
-        with open(caption_file, "r") as f:
-            return f.read()
-    except FileNotFoundError:
-        return ""
-
-
-def save_image_caption(image: str, caption: str) -> None:
-    caption_file = path.splitext(image)[0] + ".txt"
-
-    with open(caption_file, "w") as f:
-        f.write(caption)
 
 
 def make_image_tab(dataset_state: gr.State, group_state: gr.State):
