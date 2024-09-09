@@ -39,7 +39,6 @@ def caption_image(image: str, model: str, prompt: str) -> str:
     print(f"Captioned image with {model}: {caption}")
 
     # TODO: apply group caption template
-    save_image_caption(image, caption)
     return caption
 
 
@@ -105,7 +104,7 @@ def make_image_tab(dataset_state: gr.State, group_state: gr.State):
             with gr.Accordion("Image Caption"):
                 with gr.Row():
                     caption = gr.Textbox(label="Image Caption", value=image_caption, interactive=True, scale=3)
-                    set_caption = gr.Button("Set Image Caption", scale=1)
+                    set_caption = gr.Button("Save Image Caption", scale=1)
                     set_caption.click(fn=lambda caption: save_image_caption(state.active_image, caption), inputs=[caption])
 
 
