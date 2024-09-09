@@ -1,7 +1,7 @@
 import gradio as gr
 # from os import path
 
-from args import CAPTION_MODELS
+from args import Args
 from models import AppState, GroupMetaFile
 from utils.dataset import list_group_images
 from utils.group import count_group_labels, load_group_meta, save_group_meta
@@ -68,7 +68,7 @@ def get_active_or_first_group(state: AppState | None) -> str | None:
     return None
 
 
-def make_group_tab(dataset_state: gr.State, group_state: gr.State):
+def make_group_tab(args: Args, dataset_state: gr.State, group_state: gr.State):
     with gr.Blocks() as tab_group:
         @gr.render(inputs=[dataset_state, group_state])
         def render_group(state: AppState | None, group_meta: GroupMetaFile | None):
@@ -104,11 +104,11 @@ def make_group_tab(dataset_state: gr.State, group_state: gr.State):
                     set_caption.click(fn=lambda c: set_group_caption(group_meta, c), inputs=[caption], outputs=[group_state])
 
                 with gr.Row():
-                    for model in CAPTION_MODELS:
+                    for model in args.caption_models:
                         gr.Button(f"Caption group with {model}", interactive=False)
 
             with gr.Accordion("Group Prompts"):
-                for model in CAPTION_MODELS:
+                for model in args.caption_models:
                     with gr.Row():
                         def set_prompt(prompt, model=model, state=group_meta):
                             return set_group_prompt(state, model, prompt)

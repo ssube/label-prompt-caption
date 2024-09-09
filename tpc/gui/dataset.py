@@ -1,11 +1,10 @@
-from typing import List, Tuple
+from typing import List
 
 import gradio as gr
 
-from args import IMAGE_FORMATS
-from models import DatasetMeta, AppState, GroupMetaFile
+from args import Args
+from models import DatasetMeta, AppState
 from utils.dataset import list_dataset_groups, count_dataset_groups
-from utils.group import load_group_meta
 
 
 def load_dataset(name: str, path: str, image_formats: List[str]):
@@ -25,14 +24,14 @@ def view_group(group: str, state: AppState) -> AppState:
     return new_state
 
 
-def make_dataset_tab(dataset_state: gr.State):
+def make_dataset_tab(args: Args, dataset_state: gr.State):
     with gr.Blocks() as tab_dataset:
-        with gr.Row():
-            dataset_name = gr.Textbox(label="Dataset Name", placeholder="my_dataset")
+        # with gr.Row():
+        #     dataset_name = gr.Textbox(label="Dataset Name", placeholder="my_dataset")
 
         with gr.Row():
             dataset_path = gr.Textbox(label="Base Path", placeholder="path/to/images")
-            dataset_formats = gr.CheckboxGroup(choices=IMAGE_FORMATS, label="Image Formats", value=IMAGE_FORMATS)
+            dataset_formats = gr.CheckboxGroup(choices=args.image_formats, label="Image Formats", value=args.image_formats)
 
         with gr.Row():
             load = gr.Button("Load Groups")

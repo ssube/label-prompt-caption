@@ -2,7 +2,7 @@ import gradio as gr
 from jinja2 import Environment
 from random import shuffle
 
-from args import CAPTION_MODELS
+from args import Args
 from caption_models import CAPTION_CALLBACKS
 from models import AppState, GroupMetaFile, ImageMeta, AnnotationMeta
 from utils.image import get_annotation_dict, load_image_caption, save_image_caption
@@ -64,7 +64,7 @@ def strip_caption(caption: str) -> str:
     return caption.rsplit(".", 1)[0] + "."
 
 
-def make_image_tab(dataset_state: gr.State, group_state: gr.State):
+def make_image_tab(args: Args, dataset_state: gr.State, group_state: gr.State):
     with gr.Blocks() as tab_image:
         @gr.render(inputs=[dataset_state, group_state])
         def render_image(state: AppState | None, group_meta: GroupMetaFile | None):
@@ -126,7 +126,7 @@ def make_image_tab(dataset_state: gr.State, group_state: gr.State):
 
 
             with gr.Accordion("Image Prompts"):
-                for model in CAPTION_MODELS:
+                for model in args.caption_models:
                     with gr.Row():
                         prompt_template = jinja.from_string(group_meta.group.prompt.get(model, "{{ caption }}"))
                         prompt_args = get_annotation_dict(image_meta)
