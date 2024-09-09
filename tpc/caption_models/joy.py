@@ -54,9 +54,9 @@ def load_joy(clip_name="google/siglip-so400m-patch14-384", model_name=LLAMA_MODE
 
     # Image Adapter
     print("Loading image adapter")
-    adapter_path = hf_hub_download("fancyfeast/joy-caption-pre-alpha", subfolder="wpkklhc6")
+    adapter_path = hf_hub_download("fancyfeast/joy-caption-pre-alpha", subfolder="wpkklhc6", filename="image_adapter.pt")
     image_adapter = ImageAdapter(clip_model.config.hidden_size, llama_model.config.hidden_size)
-    image_adapter.load_state_dict(torch.load(adapter_path / "image_adapter.pt", map_location="cpu"))
+    image_adapter.load_state_dict(torch.load(adapter_path, map_location="cpu"))
     image_adapter.eval()
     image_adapter.to(MODEL_DEVICE)
 
