@@ -41,7 +41,7 @@ def set_group_prompt(group_state: GroupMetaFile, model: str, prompt: str) -> Gro
     return new_group_state
 
 
-def load_group_state(dataset_state: AppState, group: str | None) -> GroupMetaFile:
+def load_group_state(dataset_state: AppState, group: str | None = None) -> GroupMetaFile:
     if group is None:
         group = get_active_or_first_group(dataset_state)
 
@@ -95,10 +95,15 @@ def make_group_tab(dataset_state: gr.State, group_state: gr.State):
             if not group_meta:
                 group_meta = load_group_state(state, active_group)
 
-            with gr.Row():
-                caption = gr.Textbox(label="Group Caption", value=group_meta.group.caption, interactive=True, scale=3)
-                set_caption = gr.Button("Set Group Caption", scale=1)
-                set_caption.click(fn=lambda c: set_group_caption(group_meta, c), inputs=[caption], outputs=[group_state])
+            with gr.Accordion("Group Captions"):
+                with gr.Row():
+                    caption = gr.Textbox(label="Caption Template", value=group_meta.group.caption, interactive=True, scale=3)
+                    set_caption = gr.Button("Set Caption Template", scale=1)
+                    set_caption.click(fn=lambda c: set_group_caption(group_meta, c), inputs=[caption], outputs=[group_state])
+
+                with gr.Row():
+                    for model in CAPTION_MODELS:
+                        gr.Button(f"Caption group with {model}")
 
             with gr.Accordion("Group Prompts"):
                 for model in CAPTION_MODELS:
