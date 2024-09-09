@@ -41,9 +41,12 @@ def set_group_prompt(group_state: GroupMetaFile, model: str, prompt: str) -> Gro
     return new_group_state
 
 
-def load_group_state(dataset_state: AppState) -> GroupMetaFile:
-    print("Loading group state...", dataset_state.active_group)
-    group_meta = load_group_meta(dataset_state.dataset, dataset_state.active_group)
+def load_group_state(dataset_state: AppState, group: str | None) -> GroupMetaFile:
+    if group is None:
+        group = get_active_or_first_group(dataset_state)
+
+    print("Loading group state...", group)
+    group_meta = load_group_meta(dataset_state.dataset, group)
     return group_meta
 
 
@@ -90,7 +93,7 @@ def make_group_tab(dataset_state: gr.State, group_state: gr.State):
                 save.click(fn=save_group_state, inputs=[dataset_state, group_state])
 
             if not group_meta:
-                group_meta = load_group_state(state)
+                group_meta = load_group_state(state, active_group)
 
             with gr.Row():
                 caption = gr.Textbox(label="Group Caption", value=group_meta.group.caption, interactive=True, scale=3)
