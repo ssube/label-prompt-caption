@@ -61,7 +61,7 @@ def merge_caption(caption: str) -> str:
 def strip_caption(caption: str) -> str:
     print("Stripping caption...", caption)
     # remove everything after the last .
-    return caption.rsplit(".", 1)[0]
+    return caption.rsplit(".", 1)[0] + "."
 
 
 def make_image_tab(dataset_state: gr.State, group_state: gr.State):

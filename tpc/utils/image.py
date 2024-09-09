@@ -19,6 +19,7 @@ def load_image_caption(image: str) -> str:
 
 def save_image_caption(image: str, caption: str) -> None:
     caption_file = path.splitext(image)[0] + ".txt"
+    print(f"Saving caption to {caption_file}: {caption}")
 
     with open(caption_file, "w") as f:
         f.write(caption)
