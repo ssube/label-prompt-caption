@@ -39,7 +39,7 @@ def make_dataset_tab(dataset_state: gr.State):
             load.click(fn=load_dataset, inputs=[dataset_name, dataset_path, dataset_formats], outputs=[dataset_state])
 
         @gr.render(inputs=[dataset_state])
-        def render_groups(state: AppState | None, group_meta: GroupMetaFile | None):
+        def render_groups(state: AppState | None):
             if state is None:
                 # placeholder when no dataset has been loaded
                 with gr.Row(variant="panel"):
