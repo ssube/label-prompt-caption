@@ -30,6 +30,10 @@ def make_dataset_tab(args: Args, dataset_state: gr.State):
         #     dataset_name = gr.Textbox(label="Dataset Name", placeholder="my_dataset")
 
         with gr.Row():
+            repo_path = gr.Textbox(label="HF Repo", placeholder="ssube/animals-in-hats")
+            download_button = gr.Button("Download Dataset", interactive=False)
+
+        with gr.Row():
             dataset_path = gr.Textbox(label="Base Path", placeholder="path/to/images")
             dataset_formats = gr.CheckboxGroup(choices=args.image_formats, label="Image Formats", value=args.image_formats)
 
