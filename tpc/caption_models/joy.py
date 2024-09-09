@@ -5,6 +5,7 @@ import torch
 
 from args import MODEL_DEVICE, MODEL_FORMAT
 
+CLIP_MODEL = "google/siglip-so400m-patch14-384"
 LLAMA_FREE = "cognitivecomputations/dolphin-2.9.4-llama3.1-8b"
 LLAMA_GATED = "meta-llama/Meta-Llama-3.1-8B"
 LLAMA_MODEL = environ.get("LPC_LLAMA_MODEL", LLAMA_GATED)
@@ -28,7 +29,7 @@ image_adapter = None
 llama_model = None
 llama_tokenizer = None
 
-def load_joy(clip_name="google/siglip-so400m-patch14-384", model_name=LLAMA_MODEL):
+def load_joy(clip_name=CLIP_MODEL, model_name=LLAMA_MODEL):
     global clip_model, clip_processor, image_adapter, llama_model, llama_tokenizer
 
     from huggingface_hub import hf_hub_download
@@ -113,5 +114,5 @@ def caption_with_joy(image_name: str, prompt: str) -> str:
         generate_ids = generate_ids[:, :-1]
 
     caption = llama_tokenizer.batch_decode(generate_ids, skip_special_tokens=False, clean_up_tokenization_spaces=False)[0]
-
-    return caption.strip()
+    caption = caption.replace("<|end_of_text|>", "").strip()
+    return caption

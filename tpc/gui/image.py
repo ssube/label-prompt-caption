@@ -84,7 +84,7 @@ def make_image_tab(dataset_state: gr.State, group_state: gr.State):
 
             with gr.Accordion("Image Caption"):
                 with gr.Row():
-                    caption = gr.Textbox(label="Image Caption", placeholder="Image caption", scale=3)
+                    caption = gr.Textbox(label="Image Caption", placeholder="Image caption", interactive=True, scale=3)
                     gr.Button("Set Image Caption", scale=1)
 
             with gr.Accordion("Image Prompts"):
