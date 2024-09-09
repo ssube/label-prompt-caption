@@ -1,6 +1,7 @@
 from typing import List
 
 import gradio as gr
+from huggingface_hub import snapshot_download
 
 from ..args import Args
 from ..models import DatasetMeta, AppState
@@ -24,6 +25,13 @@ def view_group(group: str, state: AppState) -> AppState:
     return new_state
 
 
+def download_dataset(repo: str, path: str):
+    print("Downloading dataset...", repo, path)
+    # download from Hugging Face
+    result = snapshot_download(repo, repo_type="dataset", local_dir=path)
+    print("Download result:", result)
+
+
 def make_dataset_tab(args: Args, dataset_state: gr.State):
     with gr.Blocks() as tab_dataset:
         # with gr.Row():
@@ -31,11 +39,13 @@ def make_dataset_tab(args: Args, dataset_state: gr.State):
 
         with gr.Row():
             repo_path = gr.Textbox(label="HF Repo", placeholder="ssube/animals-in-hats")
-            download_button = gr.Button("Download Dataset", interactive=False)
+            download_button = gr.Button("Download Dataset")
 
         with gr.Row():
             dataset_path = gr.Textbox(label="Base Path", placeholder="path/to/images")
             dataset_formats = gr.CheckboxGroup(choices=args.image_formats, label="Image Formats", value=args.image_formats)
+
+        download_button.click(fn=download_dataset, inputs=[repo_path, dataset_path])
 
         with gr.Row():
             load = gr.Button("Load Groups")
