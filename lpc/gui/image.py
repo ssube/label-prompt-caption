@@ -95,8 +95,8 @@ def make_image_tab(args: Args, dataset_state: gr.State, group_state: gr.State):
 
                 for annotation in image_meta.annotations:
                     with gr.Row():
-                        def update_annotation(group_state, value):
-                            return update_image_annotation(group_state, state.active_image, annotation.label, value)
+                        def update_annotation(group_state, value, image=state.active_image, label=annotation.label):
+                            return update_image_annotation(group_state, image, label, value)
 
                         elem = gr.Textbox(label=annotation.label, value=annotation.value, interactive=True, scale=3)
                         update = gr.Button("Update Annotation", scale=1)
