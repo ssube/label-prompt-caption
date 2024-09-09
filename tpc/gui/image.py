@@ -1,5 +1,6 @@
 import gradio as gr
 from jinja2 import Environment
+from os import path
 
 from args import CAPTION_MODELS
 from caption_models import CAPTION_CALLBACKS
@@ -38,7 +39,25 @@ def caption_image(image: str, model: str, prompt: str) -> str:
     print(f"Captioned image with {model}: {caption}")
 
     # TODO: apply group caption template
+    save_image_caption(image, caption)
     return caption
+
+
+def load_image_caption(image: str) -> str:
+    caption_file = path.splitext(image)[0] + ".txt"
+
+    try:
+        with open(caption_file, "r") as f:
+            return f.read()
+    except FileNotFoundError:
+        return ""
+
+
+def save_image_caption(image: str, caption: str) -> None:
+    caption_file = path.splitext(image)[0] + ".txt"
+
+    with open(caption_file, "w") as f:
+        f.write(caption)
 
 
 def make_image_tab(dataset_state: gr.State, group_state: gr.State):
@@ -52,6 +71,7 @@ def make_image_tab(dataset_state: gr.State, group_state: gr.State):
 
                 gr.Textbox(label="Image Path", value=state.active_image)
 
+            image_caption = load_image_caption(state.active_image)
             image_meta = group_meta.images.get(state.active_image, ImageMeta())
             image_labels = {annotation.label for annotation in image_meta.annotations}
 
@@ -84,13 +104,14 @@ def make_image_tab(dataset_state: gr.State, group_state: gr.State):
 
             with gr.Accordion("Image Caption"):
                 with gr.Row():
-                    caption = gr.Textbox(label="Image Caption", placeholder="Image caption", interactive=True, scale=3)
-                    gr.Button("Set Image Caption", scale=1)
+                    caption = gr.Textbox(label="Image Caption", value=image_caption, interactive=True, scale=3)
+                    set_caption = gr.Button("Set Image Caption", scale=1)
+                    set_caption.click(fn=lambda caption: save_image_caption(state.active_image, caption), inputs=[caption])
+
 
             with gr.Accordion("Image Prompts"):
                 for model in CAPTION_MODELS:
                     with gr.Row():
-                        # caption_model = str(model)
                         prompt_template = jinja.from_string(group_meta.group.prompt.get(model, "{{ caption }}"))
                         prompt_args = get_annotation_dict(image_meta)
                         prompt = prompt_template.render(**prompt_args, caption="{{ caption }}")
