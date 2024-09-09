@@ -65,7 +65,9 @@ def make_group_tab(dataset_state: gr.State, group_state: gr.State):
             print("Rendering group...", active_group)
 
             with gr.Row():
-                gr.Textbox(label="Group Name", value=active_group)
+                gr.Button("Previous Group", scale=1)
+                gr.Textbox(label="Group Name", value=active_group, scale=4)
+                gr.Button("Next Group", scale=1)
 
             with gr.Row():
                 load = gr.Button("Load Group Meta")

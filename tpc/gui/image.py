@@ -53,7 +53,9 @@ def make_image_tab(dataset_state: gr.State, group_state: gr.State):
                     gr.Markdown("No image selected")
                     return
 
-                gr.Textbox(label="Image Path", value=state.active_image)
+                gr.Button("Previous Image", scale=1)
+                gr.Textbox(label="Image Path", value=state.active_image, scale=4)
+                gr.Button("Next Image", scale=1)
 
             image_caption = load_image_caption(state.active_image)
             image_meta = group_meta.images.get(state.active_image, ImageMeta())
