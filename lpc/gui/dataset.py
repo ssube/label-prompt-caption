@@ -25,11 +25,11 @@ def view_group(group: str, state: AppState) -> AppState:
     return new_state
 
 
-def download_dataset(repo: str, path: str):
-    print("Downloading dataset...", repo, path)
-    # download from Hugging Face
-    result = snapshot_download(repo, repo_type="dataset", local_dir=path)
+def download_dataset(repo: str):
+    print("Downloading dataset...", repo)
+    result = snapshot_download(repo, repo_type="dataset") # , local_dir=path)
     print("Download result:", result)
+    return result
 
 
 def make_dataset_tab(args: Args, dataset_state: gr.State):
@@ -45,7 +45,7 @@ def make_dataset_tab(args: Args, dataset_state: gr.State):
             dataset_path = gr.Textbox(label="Base Path", placeholder="path/to/images")
             dataset_formats = gr.CheckboxGroup(choices=args.image_formats, label="Image Formats", value=args.image_formats)
 
-        download_button.click(fn=download_dataset, inputs=[repo_path, dataset_path])
+        download_button.click(fn=download_dataset, inputs=[repo_path], outputs=[dataset_path])
 
         with gr.Row():
             load = gr.Button("Load Groups")

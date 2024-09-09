@@ -1,6 +1,7 @@
 import gradio as gr
 from jinja2 import Environment
 from random import shuffle
+from os import path
 
 from ..args import Args
 from ..caption_models import CAPTION_CALLBACKS
@@ -12,37 +13,40 @@ jinja = Environment()
 
 
 def add_image_annotation(group_meta: GroupMetaFile, image: str, label: str, value: str) -> GroupMetaFile:
-    print("Adding image annotation...", label, value)
-    image_meta = group_meta.images.get(image, ImageMeta())
+    image_name = path.basename(image)
+    print("Adding image annotation...", image_name, label, value)
+    image_meta = group_meta.images.get(image_name, ImageMeta())
     image_meta.annotations.append(AnnotationMeta(label=label, value=value))
 
     new_group_meta = GroupMetaFile(**group_meta.__dict__)
-    new_group_meta.images[image] = image_meta
+    new_group_meta.images[image_name] = image_meta
     return new_group_meta
 
 
 def update_image_annotation(group_meta: GroupMetaFile, image: str, label: str, value: str) -> GroupMetaFile:
-    print("Updating image annotation...", label, value)
-    image_meta = group_meta.images.get(image, ImageMeta())
+    image_name = path.basename(image)
+    print("Updating image annotation...", image_name, label, value)
+    image_meta = group_meta.images.get(image_name, ImageMeta())
     for annotation in image_meta.annotations:
         if annotation.label == label:
             annotation.value = value
 
     new_group_meta = GroupMetaFile(**group_meta.__dict__)
-    new_group_meta.images[image] = image_meta
+    new_group_meta.images[image_name] = image_meta
     return new_group_meta
 
 
 def caption_image(group_meta: GroupMetaFile, image: str, model: str, prompt: str) -> str:
+    image_name = path.basename(image)
     callback = CAPTION_CALLBACKS[model]
     model_caption = callback(image, prompt)
-    print(f"Captioned image with {model}: {model_caption}")
+    print(f"Captioned image {image} with {model}: {model_caption}")
 
     # apply group caption template
     caption_template = jinja.from_string(group_meta.group.caption)
     caption_args = {}
     if image in group_meta.images:
-        caption_args = get_annotation_dict(group_meta.images[image])
+        caption_args = get_annotation_dict(group_meta.images[image_name])
 
     caption = caption_template.render(**caption_args, caption=model_caption)
     return caption
@@ -81,7 +85,8 @@ def make_image_tab(args: Args, dataset_state: gr.State, group_state: gr.State):
                 gr.Button("Next Image", scale=1, interactive=False)
 
             image_caption = load_image_caption(state.active_image)
-            image_meta = group_meta.images.get(state.active_image, ImageMeta())
+            image_name = path.basename(state.active_image)
+            image_meta = group_meta.images.get(image_name, ImageMeta())
             image_labels = {annotation.label for annotation in image_meta.annotations}
 
             required_labels = set(group_meta.group.required_labels)
